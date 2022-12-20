@@ -1,0 +1,3 @@
+- sensor is ready to work after 30s. Program needs a constant 30s delay after boot.
+- 7805 also requires a capacitor for voltage filtering
+- variables used in both main program and interrupts should be `volatile`
