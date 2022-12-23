@@ -6,6 +6,8 @@
 #define CONSOLE_BAUD 9600
 #endif
 
+#ifdef ENABLE_CONSOLE
+
 namespace Output
 {
     Console::Console()
@@ -77,3 +79,50 @@ namespace Output
 
     Console Console::instance;
 }
+
+#else
+
+namespace Output
+{
+    Console::Console()
+    {
+        this->initialize();
+    }
+
+    void Console::initialize()
+    {
+    }
+
+    Console &Console::get_instance()
+    {
+        return instance;
+    }
+
+    void Console::write(unsigned char character)
+    {
+    }
+
+    void Console::write(unsigned char* message)
+    {
+    }
+
+    void Console::write(unsigned char *message, uint16_t length)
+    {
+    }
+
+    void Console::write_line(unsigned char character)
+    {
+    }
+
+    void Console::write_line(unsigned char* message)
+    {
+    }
+
+    void Console::write_line(unsigned char *message, uint16_t length)
+    {
+    }
+
+    Console Console::instance;
+}
+
+#endif
