@@ -16,6 +16,8 @@
                 "-fno-exceptions",
                 "-fno-threadsafe-statics",
                 "-pipe",
+                "-DENABLE_CONSOLE",
+                "--param=min-pagesize=0",
                 "-mmcu=atmega8a",
                 "-DF_CPU=4000000UL"
             ]

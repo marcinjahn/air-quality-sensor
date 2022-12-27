@@ -5,6 +5,7 @@
 
 namespace I2C
 {
+    /// @brief Statuses for I2C operations
     enum I2CStatusCode: uint8_t {
         started = 0x08,
         repeated_start = 0x10,
@@ -20,9 +21,18 @@ namespace I2C
         unknown
     };
 
+    /// @brief Sends a single byte via I2C
+    /// @param address Recipient address
+    /// @param byte A byte to send
+    /// @return 
     I2CStatusCode write_byte(uint8_t address, uint8_t byte);
 
+    /// @brief Reads data from external party
+    /// @param address An address of the sender
+    /// @param receive_buffer An array for the incoming data
+    /// @param length The lengs of of the receive_buffer array (number of bytes)
+    /// @return 
     I2CStatusCode read(uint8_t address, uint8_t* receive_buffer, uint8_t length);
 }
 
-#endif I2C_H
+#endif // I2C_H

@@ -5,6 +5,7 @@
 
 namespace HM3301
 {
+    /// @brief The output from the HM3301 Sensor
     struct Reading
     {
         uint16_t pm_1_concentration_cf_1;
@@ -21,7 +22,10 @@ namespace HM3301
         uint16_t no_particles_10_in_1_liter;
     };
 
+    /// @brief Initalize the sensor
     void initialize();
+
+    /// @brief Read the sensor measurements
     Reading read();
 }
 

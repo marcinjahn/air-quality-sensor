@@ -1,6 +1,5 @@
 #include <avr/io.h>
 #include "i2c.hpp"
-#include "console.hpp"
 
 #ifndef cbi
 #define cbi(sfr, bit) (_SFR_BYTE(sfr) &= ~(1 << (bit)))
@@ -8,8 +7,6 @@
 
 #define SLA_W 0
 #define SLA_R 1
-
-using namespace Output;
 
 namespace I2C
 {
@@ -21,16 +18,9 @@ namespace I2C
 
     I2CStatusCode write_byte(uint8_t address, uint8_t byte)
     {
-        Console& console = Console::get_instance();
-
         I2CStatusCode status;
 
         status = start();
-
-        unsigned char message[] = {"START sent"};
-        console.write_line(message);
-        unsigned char message1[] = { (unsigned char)status, '\0' };
-        console.write_line(message1);
 
         if (status != started)
         {
@@ -39,11 +29,6 @@ namespace I2C
 
         status = write_byte_core(address | SLA_W);
 
-        unsigned char message3[] = {"SLA-W sent"};
-        console.write_line(message3);
-        unsigned char message4[] = { (unsigned char)status, '\0' };
-        console.write_line(message4);
-
         if (status != sla_w_transmitted_with_ack)
         {
             return status;
@@ -51,31 +36,16 @@ namespace I2C
 
         status = write_byte_core(byte);
 
-        unsigned char message5[] = {"CMD sent"};
-        console.write_line(message5);
-        unsigned char message6[] = { (unsigned char)status, '\0' };
-        console.write_line(message6);
-
         stop();
-
-        unsigned char message7[] = {"STOP sent"};
-        console.write_line(message7);
 
         return status;
     }
 
     I2CStatusCode read(uint8_t address, uint8_t* receive_buffer, uint8_t length)
     {
-        Console& console = Console::get_instance();
-
         I2CStatusCode status;
 
         status = start();
-
-        unsigned char message[] = {"START sent"};
-        console.write_line(message);
-        unsigned char message1[] = { (unsigned char)status, '\0' };
-        console.write_line(message1);
 
         if (status != started)
         {
@@ -83,11 +53,6 @@ namespace I2C
         }
 
         status = write_byte_core(address | SLA_R);
-
-        unsigned char message2[] = {"SLA-R sent"};
-        console.write_line(message2);
-        unsigned char message3[] = { (unsigned char)status, '\0' };
-        console.write_line(message3);
 
         if (status != sla_r_transmitted_with_ack)
         {
@@ -97,11 +62,6 @@ namespace I2C
         for (uint8_t i = 0; i < length; i++)
         {
             status = read_core(receive_buffer + i);
-
-            unsigned char message4[] = {"BYTE RECEIVED"};
-            console.write_line(message4);
-            unsigned char message5[] = { *(receive_buffer + i) };
-            console.write_line(message5, 1);
 
             if (status != data_byte_received_with_ack)
             {
