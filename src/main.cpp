@@ -3,7 +3,7 @@
 #include "output/console.hpp"
 #include "sensor/hm3301.hpp"
 #include "output/display/e-ink-driver.hpp"
-#include "utilities/graphics/GUI_Paint.h"
+#include "utilities/graphics/painter.hpp"
 #include "utilities/graphics/fonts.h"
 
 #ifndef F_CPU
@@ -45,21 +45,20 @@ void display_intro()
     EInkDisplay &display = EInkDisplay::get_instance();
     display.clear();
 
-    unsigned char image_temp[1280]={0};
-    Paint paith(image_temp, 80, 128);
+    unsigned char image_buffer[1280]={0};
+    Painter painter(image_buffer, 80, 128);
 
     display.clear();
     _delay_ms(500);
-    paith.DrawStringAt(13, 0, "1.02inch", &Font12, 0xff);
-    paith.DrawStringAt(22, 13, "epd", &Font12, 0xff);
-    paith.DrawStringAt(10, 30, "ABC123", &Font16, 0xff);
+    painter.draw_string(Point(13, 0), "1.02inch", &Font12);
+    painter.draw_string(Point(22, 13), "epd", &Font12);
+    painter.draw_string(Point(10, 30), "ABC123", &Font16);
     
-    paith.DrawLine(10, 50, 60, 100, 0xff );
-    paith.DrawLine(10, 100, 60, 50, 0xff);    
-    paith.DrawRectangle(10, 50, 60, 100, 0xff);
-    paith.DrawFilledCircle(35, 75, 20, 0xff);
+    painter.draw_line(Point(10, 50), Point(60, 100));
+    painter.draw_line(Point(10, 100), Point(60, 50));    
+    painter.draw_rectangle(Point(10, 50), Point(60, 100));
 
-    display.display(image_temp);
+    display.display(image_buffer);
 
     // TODO: Write some intro text
 }

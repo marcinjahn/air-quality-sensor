@@ -23,8 +23,8 @@
 #define DC_STATE PINB
 #define BUSY_STATE PINC
 
-#define SCREEN_HEIGHT 128
-#define SCREEN_WIDTH 80
+#define SCREEN_HEIGHT 80
+#define SCREEN_WIDTH 128
 
 /**
  * full screen update LUT
