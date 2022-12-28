@@ -4,9 +4,10 @@
     ],
     "AVR.source.compiler": "/usr/bin/avr-gcc",
     "AVR.programmer.tool": "/usr/bin/avrdude",
-    "AVR.source.libraries": [],
-    "AVR.device.type": "atmega8a",
-    "AVR.device.frequency": 4000000,
-    "AVR.programmer.type": "usbasp-clone",
-    "AVR.programmer.rate": 152000
+    "AVR.source.libraries": [
+        "include"
+    ],
+    "AVR.device.type": "atmega328p",
+    "AVR.device.frequency": 16000000,
+    "AVR.programmer.type": "usbasp-clone"
 }

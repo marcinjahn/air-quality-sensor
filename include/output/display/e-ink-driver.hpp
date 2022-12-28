@@ -11,6 +11,7 @@ namespace Output
         EInkDisplay();
         static EInkDisplay instance;
         void initialize();
+        void initialize_pins();
         void reset();
         void send_command(uint8_t command);
         void send_data(uint8_t data);

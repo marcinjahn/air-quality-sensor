@@ -1,5 +1,5 @@
 #include <avr/io.h>
-#include "i2c.hpp"
+#include "communication/i2c.hpp"
 
 #ifndef cbi
 #define cbi(sfr, bit) (_SFR_BYTE(sfr) &= ~(1 << (bit)))

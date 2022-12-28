@@ -25,7 +25,7 @@
  */
 
 #include <avr/pgmspace.h>
-#include "GUI_Paint.h"
+#include "utilities/graphics/GUI_Paint.h"
 
 Paint::Paint(unsigned char* image, int width, int height) {
     this->rotate = ROTATE_0;

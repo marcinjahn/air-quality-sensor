@@ -1,5 +1,5 @@
 #include <avr/io.h>
-#include "spi_master.hpp"
+#include "communication/spi_master.hpp"
 
 namespace SPI
 {

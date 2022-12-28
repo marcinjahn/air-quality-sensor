@@ -6,7 +6,9 @@
             "compilerPath": "/usr/bin/avr-gcc",
             "cStandard": "${default}",
             "cppStandard": "${default}",
-            "includePath": [],
+            "includePath": [
+                "include/**"
+            ],
             "compilerArgs": [
                 "-g",
                 "-Os",
@@ -18,8 +20,8 @@
                 "-pipe",
                 "-DENABLE_CONSOLE",
                 "--param=min-pagesize=0",
-                "-mmcu=atmega8a",
-                "-DF_CPU=4000000UL"
+                "-mmcu=atmega328p",
+                "-DF_CPU=16000000UL"
             ]
         }
     ],

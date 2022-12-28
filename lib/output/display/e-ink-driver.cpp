@@ -1,8 +1,9 @@
-#include "e-ink-driver.hpp"
-#include "config.hpp"
+#include "output/display/e-ink-driver.hpp"
+#include "output/display/config.hpp"
 #include <util/delay.h>
-#include "../../communication/spi_master.hpp"
-#include "../../utilities/pins.hpp"
+#include "communication/spi_master.hpp"
+#include "utilities/pins.hpp"
+#include "output/console.hpp"
 
 namespace Output
 {
@@ -51,7 +52,7 @@ namespace Output
         send_data(0x80);
 
         send_command(0x82); // sets VCOM_DC value
-        send_data(0x12);    //-1v
+        send_data(0x12);    // -1v
 
         send_command(0xe3); // Set POWER SAVING
         send_data(0x33);
@@ -61,14 +62,14 @@ namespace Output
         wait_for_idle();
     }
 
-    void initialize_pins()
+    void EInkDisplay::initialize_pins()
     {
-        DDRB |= (1 << CS_PIN);
-        DDRB |= (1 << RST_PIN);
-        DDRB |= (1 << DC_PIN);
-        DDRB &= ~(1 << BUSY_PIN);
+        CS_DDR |= (1 << CS_PIN);
+        RST_DDR |= (1 << RST_PIN);
+        DC_DDR |= (1 << DC_PIN);
+        BUSY_DDR &= ~(1 << BUSY_PIN);
 
-        set_pin_high(PORTB, CS_PIN);
+        set_pin_high(CS_PORT, CS_PIN);
     }
 
     void EInkDisplay::set_lut(void)
@@ -92,33 +93,33 @@ namespace Output
 
     void EInkDisplay::reset()
     {
-        set_pin_low(PORTB, RST_PIN);
+        set_pin_low(RST_PORT, RST_PIN);
 
         _delay_ms(20);
 
-        set_pin_high(PORTB, RST_PIN);
+        set_pin_high(RST_PORT, RST_PIN);
 
         _delay_ms(20);
     }
 
     void EInkDisplay::send_command(uint8_t command)
     {
-        set_pin_low(PORTB, CS_PIN);
-        set_pin_low(PORTB, DC_PIN); // command
+        set_pin_low(CS_PORT, CS_PIN);
+        set_pin_low(DC_PORT, DC_PIN); // command
 
         SPI::send(command);
         
-        set_pin_high(PORTB, CS_PIN);
+        set_pin_high(CS_PORT, CS_PIN);
     }
 
     void EInkDisplay::send_data(uint8_t data)
     {
-        set_pin_low(PORTB, CS_PIN);
-        set_pin_high(PORTB, DC_PIN); // data
+        set_pin_low(CS_PORT, CS_PIN);
+        set_pin_high(DC_PORT, DC_PIN); // data
 
         SPI::send(data);
 
-        set_pin_high(PORTB, CS_PIN);
+        set_pin_high(CS_PORT, CS_PIN);
     }
 
     void EInkDisplay::wait_for_idle()
@@ -128,7 +129,7 @@ namespace Output
         {
             send_command(0x71);
             _delay_ms(50);
-            busy = !get_pin_state(PINB, BUSY_PIN);
+            busy = !get_pin_state(BUSY_STATE, BUSY_PIN);
         }
 
         _delay_ms(200);
@@ -188,10 +189,7 @@ namespace Output
         {
             for (uint16_t i = 0; i < width_bytes; i++)
             {
-                // TODO: Switch back to the correct implementation
-                if (j > 64) send_data(0xff);
-                else send_data(0);
-                // send_data(~(image_buffer[i + j * width_bytes]));
+                send_data(~(image_buffer[i + j * width_bytes]));
             }
         }
         
@@ -207,7 +205,7 @@ namespace Output
         send_command(0X07); // deep sleep
         send_data(0xA5);
 
-        set_pin_low(PORTB, RST_PIN);
+        set_pin_low(RST_PORT, RST_PIN);
     }
 
     EInkDisplay &EInkDisplay::get_instance()

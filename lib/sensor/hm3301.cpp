@@ -1,6 +1,6 @@
 #include <avr/io.h>
-#include "hm3301.hpp"
-#include "../communication/i2c.hpp"
+#include "sensor/hm3301.hpp"
+#include "communication/i2c.hpp"
 
 #define SENSOR_WRITE_ADDRESS 0x80
 #define SENSOR_READ_ADDRESS 0x81

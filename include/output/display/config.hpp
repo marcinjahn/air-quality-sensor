@@ -3,10 +3,25 @@
 
 // The display should be connected to PORTB
 
-#define CS_PIN 2
-#define RST_PIN 0
-#define DC_PIN 1
-#define BUSY_PIN 7
+#define CS_PIN PB2
+#define RST_PIN PB0
+#define DC_PIN PB1
+#define BUSY_PIN PC3
+
+#define CS_PORT PORTB
+#define RST_PORT PORTB
+#define DC_PORT PORTB
+#define BUSY_PORT PORTC
+
+#define CS_DDR DDRB
+#define RST_DDR DDRB
+#define DC_DDR DDRB
+#define BUSY_DDR DDRC
+
+#define CS_STATE PINB
+#define RST_STATE PINB
+#define DC_STATE PINB
+#define BUSY_STATE PINC
 
 #define SCREEN_HEIGHT 128
 #define SCREEN_WIDTH 80

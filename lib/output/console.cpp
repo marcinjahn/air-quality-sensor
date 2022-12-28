@@ -1,5 +1,5 @@
-#include "console.hpp"
-#include "../communication/uart.hpp"
+#include "output/console.hpp"
+#include "communication/uart.hpp"
 #include <avr/io.h>
 
 #ifndef CONSOLE_BAUD
