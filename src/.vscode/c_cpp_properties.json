@@ -20,6 +20,7 @@
                 "-pipe",
                 "-DENABLE_CONSOLE",
                 "--param=min-pagesize=0",
+                "-DCONSOLE_BAUD=9600",
                 "-mmcu=atmega328p",
                 "-DF_CPU=16000000UL"
             ]

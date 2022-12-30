@@ -14,14 +14,16 @@ namespace Output
 
     public:
         static Console &get_instance();
-        void write(unsigned char character);
-        void write(unsigned char *message);
-        void write(unsigned char *message, uint16_t length);
-        void write(unsigned int number);
-        void write_line(unsigned char character);
-        void write_line(unsigned char *message);
-        void write_line(unsigned char *message, uint16_t length);
-        void write_line(unsigned int number);
+        void write(char character);
+        void write(const char *message);
+        void write(char *message, uint16_t length);
+        void write(int number);
+        void write(long number);
+        void write_line(char character);
+        void write_line(const char *message);
+        void write_line(char *message, uint16_t length);
+        void write_line(int number);
+        void write_line(long number);
     };
 }
 

@@ -33,6 +33,11 @@ namespace I2C
     /// @param length The lengs of of the receive_buffer array (number of bytes)
     /// @return 
     I2CStatusCode read(uint8_t address, uint8_t* receive_buffer, uint8_t length);
+
+    /// @brief Configures I2C with desired clock frequency. Mind that the prescaler
+    /// is hardcoded to the value 16.
+    /// @param i2c_frequency The desired SCL frequency
+    void initialize(long i2c_frequency);
 }
 
 #endif // I2C_H

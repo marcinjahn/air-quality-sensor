@@ -2,12 +2,16 @@
 #define HM3301_H
 
 #include <avr/io.h>
+#include "communication/i2c.hpp"
+
+#define HM3301_INIT_TIME_S 10 // Should be 30, but it seems that the initial results are not really bad anyway
 
 namespace HM3301
 {
     /// @brief The output from the HM3301 Sensor
     struct Reading
     {
+        bool is_ok;
         uint16_t pm_1_concentration_cf_1;
         uint16_t pm_1_concentration_cf_atm;
         uint16_t pm_2_5_concentration_cf_1;
@@ -23,7 +27,8 @@ namespace HM3301
     };
 
     /// @brief Initalize the sensor
-    void initialize();
+    /// @return true when initialization was successful, false otherwise
+    bool initialize();
 
     /// @brief Read the sensor measurements
     Reading read();

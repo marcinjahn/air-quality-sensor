@@ -999,6 +999,7 @@ sFONT Font8 = {
   Font8_Table,
   5, /* Width */
   8, /* Height */
+  false
 };
 
 /************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/

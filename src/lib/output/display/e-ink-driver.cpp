@@ -69,7 +69,7 @@ namespace Output
         DC_DDR |= (1 << DC_PIN);
         BUSY_DDR &= ~(1 << BUSY_PIN);
 
-        set_pin_high(CS_PORT, CS_PIN);
+        set_register_bit_high(CS_PORT, CS_PIN);
     }
 
     void EInkDisplay::set_lut(void)
@@ -93,33 +93,33 @@ namespace Output
 
     void EInkDisplay::reset()
     {
-        set_pin_low(RST_PORT, RST_PIN);
+        set_register_bit_low(RST_PORT, RST_PIN);
 
         _delay_ms(20);
 
-        set_pin_high(RST_PORT, RST_PIN);
+        set_register_bit_high(RST_PORT, RST_PIN);
 
         _delay_ms(20);
     }
 
     void EInkDisplay::send_command(uint8_t command)
     {
-        set_pin_low(CS_PORT, CS_PIN);
-        set_pin_low(DC_PORT, DC_PIN); // command
+        set_register_bit_low(CS_PORT, CS_PIN);
+        set_register_bit_low(DC_PORT, DC_PIN); // command
 
         SPI::send(command);
         
-        set_pin_high(CS_PORT, CS_PIN);
+        set_register_bit_high(CS_PORT, CS_PIN);
     }
 
     void EInkDisplay::send_data(uint8_t data)
     {
-        set_pin_low(CS_PORT, CS_PIN);
-        set_pin_high(DC_PORT, DC_PIN); // data
+        set_register_bit_low(CS_PORT, CS_PIN);
+        set_register_bit_high(DC_PORT, DC_PIN); // data
 
         SPI::send(data);
 
-        set_pin_high(CS_PORT, CS_PIN);
+        set_register_bit_high(CS_PORT, CS_PIN);
     }
 
     void EInkDisplay::wait_for_idle()
@@ -129,7 +129,7 @@ namespace Output
         {
             send_command(0x71);
             _delay_ms(50);
-            busy = !get_pin_state(BUSY_STATE, BUSY_PIN);
+            busy = !get_register_bit(BUSY_STATE, BUSY_PIN);
         }
 
         _delay_ms(200);
@@ -137,14 +137,26 @@ namespace Output
 
     void EInkDisplay::turn_on()
     {
+        Console &console = Console::get_instance();
+
         send_command(0x04); // power on
         wait_for_idle();
 
+        console.write_line("c3");
+
         send_command(0x12); // Start refreshing the screen
+
+        console.write_line("c4");
+
         wait_for_idle();
 
-        send_command(0x02);
-        wait_for_idle(); // power off
+        console.write_line("c5");
+
+        send_command(0x02); // power off
+
+        console.write_line("c6");
+
+        wait_for_idle();
     }
 
     void EInkDisplay::clear()
@@ -170,10 +182,16 @@ namespace Output
 
     void EInkDisplay::display(uint8_t *image_buffer)
     {
+        Console &console = Console::get_instance();
+
+        console.write_line("display");
+
         uint16_t width_bytes;
         width_bytes = (SCREEN_WIDTH % 8 == 0) ? (SCREEN_WIDTH / 8) : (SCREEN_WIDTH / 8 + 1);
 
         send_command(0x10);
+
+        console.write_line("c1");
 
         for (uint16_t j = 0; j < SCREEN_HEIGHT; j++)
         {
@@ -183,7 +201,11 @@ namespace Output
             }
         }
 
+        console.write_line("d1");
+
         send_command(0x13);
+
+        console.write_line("c2");
 
         for (uint16_t j = 0; j < SCREEN_HEIGHT; j++)
         {
@@ -192,8 +214,12 @@ namespace Output
                 send_data(~(image_buffer[i + j * width_bytes]));
             }
         }
+
+        console.write_line("d2");
         
         turn_on();
+
+        console.write_line("turned on");
     }
 
     void EInkDisplay::sleep(void)
@@ -205,7 +231,7 @@ namespace Output
         send_command(0X07); // deep sleep
         send_data(0xA5);
 
-        set_pin_low(RST_PORT, RST_PIN);
+        set_register_bit_low(RST_PORT, RST_PIN);
     }
 
     EInkDisplay &EInkDisplay::get_instance()

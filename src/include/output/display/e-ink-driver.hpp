@@ -17,13 +17,13 @@ namespace Output
         void send_data(uint8_t data);
         void wait_for_idle();
         void set_lut(void);
-        void turn_on();
-
+        
     public:
         static EInkDisplay &get_instance();
         void display(uint8_t *image_buffer);
         void clear();
         void sleep();
+        void turn_on();
     };
 }
 

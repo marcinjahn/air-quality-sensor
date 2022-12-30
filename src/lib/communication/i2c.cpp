@@ -1,9 +1,7 @@
 #include <avr/io.h>
 #include "communication/i2c.hpp"
-
-#ifndef cbi
-#define cbi(sfr, bit) (_SFR_BYTE(sfr) &= ~(1 << (bit)))
-#endif
+#include "output/console.hpp"
+#include "utilities/pins.hpp"
 
 #define SLA_W 0
 #define SLA_R 1
@@ -13,61 +11,83 @@ namespace I2C
     I2CStatusCode start();
     void stop();
     I2CStatusCode write_byte_core(uint8_t byte);
-    I2CStatusCode read_core(uint8_t* received_byte);
+    I2CStatusCode read_core(uint8_t* received_byte, bool is_last_byte = false);
     I2CStatusCode get_status();
-
+    
     I2CStatusCode write_byte(uint8_t address, uint8_t byte)
     {
         I2CStatusCode status;
+        Output::Console &console = Output::Console::get_instance();
 
         status = start();
+        console.write_line((char)status);
 
         if (status != started)
         {
+            stop();
             return status;
         }
 
         status = write_byte_core(address | SLA_W);
+        console.write_line((char)status);
 
         if (status != sla_w_transmitted_with_ack)
         {
+            stop();
             return status;
         }
 
         status = write_byte_core(byte);
+        console.write_line((char)status);
 
         stop();
+
+        console.write_line("STARTED");
 
         return status;
     }
 
     I2CStatusCode read(uint8_t address, uint8_t* receive_buffer, uint8_t length)
     {
+        Output::Console &console = Output::Console::get_instance();
+        
         I2CStatusCode status;
 
+        console.write_line("READING");
+
         status = start();
+        console.write_line((char)status);
 
         if (status != started)
         {
+            stop();
             return status;
         }
 
         status = write_byte_core(address | SLA_R);
+        console.write_line((char)status);
 
         if (status != sla_r_transmitted_with_ack)
         {
+            stop();
             return status;
         }
 
         for (uint8_t i = 0; i < length; i++)
         {
-            status = read_core(receive_buffer + i);
+            status = read_core(receive_buffer + i, i == length - 1);
+            console.write_line((char)status);
 
-            if (status != data_byte_received_with_ack)
+            if (status != data_byte_received_with_ack && status != data_byte_received_without_ack)
             {
+                stop();
                 return status;
             }
         }
+
+        stop();
+
+        console.write_line("READ");
 
         return status;
     }
@@ -98,9 +118,9 @@ namespace I2C
         return get_status();
     }
 
-    I2CStatusCode read_core(uint8_t* received_byte)
+    I2CStatusCode read_core(uint8_t* received_byte, bool is_last_byte)
     {
-        TWCR = (1 << TWINT) | (1 << TWEN) | (1 << TWEA);
+        TWCR = (1 << TWINT) | (1 << TWEN) | ((is_last_byte ? 0 : 1) << TWEA);
         while (!(TWCR & (1 << TWINT)))
             ;
 
@@ -142,13 +162,12 @@ namespace I2C
         }
     }
 
-    // not needed, the default settings are alright
-    void init(long i2c_frequency = 100000)
+    void initialize(long i2c_frequency)
     {
-        cbi(TWSR, TWPS0);
-        cbi(TWSR, TWPS1);
-        TWBR = ((F_CPU / i2c_frequency) - 16) / 2;
-        TWCR = _BV(TWEN) | _BV(TWIE) | _BV(TWEA);
+        // Prescaler = 16
+        set_register_bit_high(TWSR, TWPS1);
+
+        TWBR = ((F_CPU / i2c_frequency) - 16) / 32; // 32 = 2 * Prescaler
     }
 }
 
